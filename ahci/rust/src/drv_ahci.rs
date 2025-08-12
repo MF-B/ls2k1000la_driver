@@ -1,5 +1,8 @@
 #![allow(dead_code, unused_assignments, unused_mut, non_upper_case_globals)]
 
+extern crate alloc;
+use alloc::vec::Vec;
+
 use crate::libahci::*;
 use crate::libata::*;
 use crate::platform::*;
@@ -54,8 +57,7 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
 
     unsafe {
         info!(
-            b"AHCI vers %02x%02x.%02x%02x, %u slots, %u ports, %s Gbps, 0x%x impl, %s mode\n\0"
-                as *const u8,
+            "AHCI vers {:02x}{:02x}.{:02x}{:02x}, {} slots, {} ports, {} Gbps, 0x{:x} impl, {} mode",
             vers >> 24 & 0xff,
             vers >> 16 & 0xff,
             vers >> 8 & 0xff,
@@ -66,138 +68,44 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
             impl_0,
             scc_s,
         );
-        info!(
-            b"flags: %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n\0" as *const u8,
-            if cap & HOST_CAP_64 != 0 {
-                b"64bit \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_NCQ != 0 {
-                b"ncq \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_SNTF != 0 {
-                b"sntf \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_MPS != 0 {
-                b"ilck \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_SSS != 0 {
-                b"stag \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_ALPM != 0 {
-                b"pm \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_LED != 0 {
-                b"led \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_CLO != 0 {
-                b"clo \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_ONLY != 0 {
-                b"only \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_PMP != 0 {
-                b"pmp \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_FBS != 0 {
-                b"fbs \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_PIO_MULTI != 0 {
-                b"pio \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_SSC != 0 {
-                b"slum \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_PART != 0 {
-                b"part \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_CCC != 0 {
-                b"ccc \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_EMS != 0 {
-                b"ems \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap & HOST_CAP_SXS != 0 {
-                b"sxs \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_DESO != 0 {
-                b"deso \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_SADM != 0 {
-                b"sadm \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_SDS != 0 {
-                b"sds \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_APST != 0 {
-                b"apst \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_NVMHCI != 0 {
-                b"nvmp \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-            if cap2 & HOST_CAP2_BOH != 0 {
-                b"boh \0" as *const u8
-            } else {
-                b"\0" as *const u8
-            },
-        );
+        // Print capability flags
+        let mut flags = Vec::new();
+        if cap & HOST_CAP_64 != 0 { flags.push("64bit"); }
+        if cap & HOST_CAP_NCQ != 0 { flags.push("ncq"); }
+        if cap & HOST_CAP_SNTF != 0 { flags.push("sntf"); }
+        if cap & HOST_CAP_MPS != 0 { flags.push("ilck"); }
+        if cap & HOST_CAP_SSS != 0 { flags.push("stag"); }
+        if cap & HOST_CAP_ALPM != 0 { flags.push("pm"); }
+        if cap & HOST_CAP_LED != 0 { flags.push("led"); }
+        if cap & HOST_CAP_CLO != 0 { flags.push("clo"); }
+        if cap & HOST_CAP_ONLY != 0 { flags.push("only"); }
+        if cap & HOST_CAP_PMP != 0 { flags.push("pmp"); }
+        if cap & HOST_CAP_FBS != 0 { flags.push("fbs"); }
+        if cap & HOST_CAP_PIO_MULTI != 0 { flags.push("pio"); }
+        if cap & HOST_CAP_SSC != 0 { flags.push("slum"); }
+        if cap & HOST_CAP_PART != 0 { flags.push("part"); }
+        if cap & HOST_CAP_CCC != 0 { flags.push("ccc"); }
+        if cap & HOST_CAP_EMS != 0 { flags.push("ems"); }
+        if cap & HOST_CAP_SXS != 0 { flags.push("sxs"); }
+        if cap2 & HOST_CAP2_DESO != 0 { flags.push("deso"); }
+        if cap2 & HOST_CAP2_SADM != 0 { flags.push("sadm"); }
+        if cap2 & HOST_CAP2_SDS != 0 { flags.push("sds"); }
+        if cap2 & HOST_CAP2_APST != 0 { flags.push("apst"); }
+        if cap2 & HOST_CAP2_NVMHCI != 0 { flags.push("nvmp"); }
+        if cap2 & HOST_CAP2_BOH != 0 { flags.push("boh"); }
+        
+        info!("flags: {}", flags.join(" "));
     }
 }
 
 // 输出sata硬盘信息
 fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
     unsafe {
-        info!(b"SATA Device Info:\n\0" as *const u8);
-        info!(b"S/N: %s\n\0" as *const u8, &(pdev.serial));
-        info!(
-            b"Product model number: %s\n\0" as *const u8,
-            &(pdev.product),
-        );
-        info!(b"Firmware version: %s\n\0" as *const u8, &(pdev.revision));
-        info!(b"Capacity: %lu sectors\n\0" as *const u8, pdev.lba);
+        info!("SATA Device Info:");
+        info!("S/N: {:?}", core::str::from_utf8_unchecked(&pdev.serial));
+        info!("Product model number: {:?}", core::str::from_utf8_unchecked(&pdev.product));
+        info!("Firmware version: {:?}", core::str::from_utf8_unchecked(&pdev.revision));
+        info!("Capacity: {} sectors", pdev.lba);
     }
 }
 
@@ -276,7 +184,7 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
             }
         }
         if timeout <= 0 {
-            unsafe { info!(b"spin up cannot finish\n\0" as *const u8) };
+            unsafe { info!("spin up cannot finish") };
             return -1;
         }
 
@@ -292,9 +200,9 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
             }
         }
         if timeout <= 0 {
-            unsafe { info!(b"port %u sata link timeout\n\0" as *const u8, i as u32) };
+            unsafe { info!("port {} sata link timeout", i as u32) };
         } else {
-            unsafe { info!(b"port %u sata link up\n\0" as *const u8, i as u32) };
+            unsafe { info!("port {} sata link up", i as u32) };
         }
 
         // clear serr
@@ -335,7 +243,7 @@ fn ahci_fill_sg(ahci_dev: &ahci_device, port: u8, buf: *mut u8, mut buf_len: u32
     let sg_count: u32 = ((buf_len - 1) / max_bytes) + 1;
 
     if sg_count > AHCI_MAX_SG {
-        unsafe { info!(b"too much sg\n\0" as *const u8) };
+        unsafe { info!("too much sg") };
         return 0;
     }
 
@@ -389,16 +297,13 @@ fn ahci_exec_ata_cmd(
 
     let cmd_slot: u32 = ahci_get_cmd_slot(ahci_readl(port_mmio + PORT_CMD_ISSUE));
     if cmd_slot == 32 {
-        unsafe { info!(b"cannot find empty command slot\n\0" as *const u8) };
+        unsafe { info!("cannot find empty command slot") };
         return 0;
     }
 
     if buf_len > AHCI_MAX_BYTES_PER_TRANS {
         unsafe {
-            info!(
-                b"max transfer length is %u bytes\n\0" as *const u8,
-                AHCI_MAX_BYTES_PER_TRANS,
-            )
+            info!("max transfer length is {} bytes", AHCI_MAX_BYTES_PER_TRANS)
         };
         return 0;
     }
@@ -460,7 +365,7 @@ fn ahci_port_start(ahci_dev: &mut ahci_device, port: u8) -> i32 {
 
     let port_status: u32 = ahci_readl(port_mmio + PORT_SCR_STAT);
     if (port_status & 0xf) != 0x3 {
-        unsafe { info!(b"no link on port %u\n\0" as *const u8, port as u32) };
+        unsafe { info!("no link on port {}", port as u32) };
         return -1;
     }
 
@@ -521,10 +426,7 @@ fn ahci_port_start(ahci_dev: &mut ahci_device, port: u8) -> i32 {
 
     if timeout <= 0 {
         unsafe {
-            info!(
-                b"ahci port %u failed to start\n\0" as *const u8,
-                port as u32,
-            )
+            info!("ahci port {} failed to start", port as u32)
         };
         return -1;
     }
@@ -771,14 +673,14 @@ fn ata_low_level_rw_lba48(
 fn ahci_port_scan(ahci_dev: &mut ahci_device) -> i32 {
     let linkmap: u32 = ahci_dev.port_map_linkup;
     if linkmap == 0 {
-        unsafe { info!(b"no port device detected\n\0" as *const u8) };
+        unsafe { info!("no port device detected") };
         return -1;
     }
 
     for i in 0..ahci_dev.n_ports {
         if (linkmap >> i & 0x1) != 0 {
             if ahci_port_start(ahci_dev, i) != 0 {
-                unsafe { info!(b"cannot start port %u\n\0" as *const u8, i as u32) };
+                unsafe { info!("cannot start port {}", i as u32) };
                 return -1;
             }
             ahci_dev.port_idx = i;
