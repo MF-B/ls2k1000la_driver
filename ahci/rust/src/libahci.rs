@@ -204,3 +204,18 @@ pub struct ahci_device {
 
     pub blk_dev: ahci_blk_dev,
 }
+
+// Manual implementation of Send and Sync for AHCI structures
+// These are safe because:
+// 1. The raw pointers are only used within controlled AHCI operations
+// 2. Access to these structures is properly synchronized at the driver level
+// 3. The underlying hardware operations are atomic
+
+unsafe impl Send for ahci_ioport {}
+unsafe impl Sync for ahci_ioport {}
+
+unsafe impl Send for ahci_device {}
+unsafe impl Sync for ahci_device {}
+
+unsafe impl Send for ahci_blk_dev {}
+unsafe impl Sync for ahci_blk_dev {}
