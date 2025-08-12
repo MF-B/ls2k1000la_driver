@@ -53,7 +53,7 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
     }
 
     unsafe {
-        ahci_printf(
+        info!(
             b"AHCI vers %02x%02x.%02x%02x, %u slots, %u ports, %s Gbps, 0x%x impl, %s mode\n\0"
                 as *const u8,
             vers >> 24 & 0xff,
@@ -66,7 +66,7 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
             impl_0,
             scc_s,
         );
-        ahci_printf(
+        info!(
             b"flags: %s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s%s\n\0" as *const u8,
             if cap & HOST_CAP_64 != 0 {
                 b"64bit \0" as *const u8
@@ -190,14 +190,14 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
 // 输出sata硬盘信息
 fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
     unsafe {
-        ahci_printf(b"SATA Device Info:\n\0" as *const u8);
-        ahci_printf(b"S/N: %s\n\0" as *const u8, &(pdev.serial));
-        ahci_printf(
+        info!(b"SATA Device Info:\n\0" as *const u8);
+        info!(b"S/N: %s\n\0" as *const u8, &(pdev.serial));
+        info!(
             b"Product model number: %s\n\0" as *const u8,
             &(pdev.product),
         );
-        ahci_printf(b"Firmware version: %s\n\0" as *const u8, &(pdev.revision));
-        ahci_printf(b"Capacity: %lu sectors\n\0" as *const u8, pdev.lba);
+        info!(b"Firmware version: %s\n\0" as *const u8, &(pdev.revision));
+        info!(b"Capacity: %lu sectors\n\0" as *const u8, pdev.lba);
     }
 }
 
@@ -276,7 +276,7 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
             }
         }
         if timeout <= 0 {
-            unsafe { ahci_printf(b"spin up cannot finish\n\0" as *const u8) };
+            unsafe { info!(b"spin up cannot finish\n\0" as *const u8) };
             return -1;
         }
 
@@ -292,9 +292,9 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
             }
         }
         if timeout <= 0 {
-            unsafe { ahci_printf(b"port %u sata link timeout\n\0" as *const u8, i as u32) };
+            unsafe { info!(b"port %u sata link timeout\n\0" as *const u8, i as u32) };
         } else {
-            unsafe { ahci_printf(b"port %u sata link up\n\0" as *const u8, i as u32) };
+            unsafe { info!(b"port %u sata link up\n\0" as *const u8, i as u32) };
         }
 
         // clear serr
@@ -335,7 +335,7 @@ fn ahci_fill_sg(ahci_dev: &ahci_device, port: u8, buf: *mut u8, mut buf_len: u32
     let sg_count: u32 = ((buf_len - 1) / max_bytes) + 1;
 
     if sg_count > AHCI_MAX_SG {
-        unsafe { ahci_printf(b"too much sg\n\0" as *const u8) };
+        unsafe { info!(b"too much sg\n\0" as *const u8) };
         return 0;
     }
 
@@ -389,13 +389,13 @@ fn ahci_exec_ata_cmd(
 
     let cmd_slot: u32 = ahci_get_cmd_slot(ahci_readl(port_mmio + PORT_CMD_ISSUE));
     if cmd_slot == 32 {
-        unsafe { ahci_printf(b"cannot find empty command slot\n\0" as *const u8) };
+        unsafe { info!(b"cannot find empty command slot\n\0" as *const u8) };
         return 0;
     }
 
     if buf_len > AHCI_MAX_BYTES_PER_TRANS {
         unsafe {
-            ahci_printf(
+            info!(
                 b"max transfer length is %u bytes\n\0" as *const u8,
                 AHCI_MAX_BYTES_PER_TRANS,
             )
@@ -460,7 +460,7 @@ fn ahci_port_start(ahci_dev: &mut ahci_device, port: u8) -> i32 {
 
     let port_status: u32 = ahci_readl(port_mmio + PORT_SCR_STAT);
     if (port_status & 0xf) != 0x3 {
-        unsafe { ahci_printf(b"no link on port %u\n\0" as *const u8, port as u32) };
+        unsafe { info!(b"no link on port %u\n\0" as *const u8, port as u32) };
         return -1;
     }
 
@@ -521,7 +521,7 @@ fn ahci_port_start(ahci_dev: &mut ahci_device, port: u8) -> i32 {
 
     if timeout <= 0 {
         unsafe {
-            ahci_printf(
+            info!(
                 b"ahci port %u failed to start\n\0" as *const u8,
                 port as u32,
             )
@@ -771,14 +771,14 @@ fn ata_low_level_rw_lba48(
 fn ahci_port_scan(ahci_dev: &mut ahci_device) -> i32 {
     let linkmap: u32 = ahci_dev.port_map_linkup;
     if linkmap == 0 {
-        unsafe { ahci_printf(b"no port device detected\n\0" as *const u8) };
+        unsafe { info!(b"no port device detected\n\0" as *const u8) };
         return -1;
     }
 
     for i in 0..ahci_dev.n_ports {
         if (linkmap >> i & 0x1) != 0 {
             if ahci_port_start(ahci_dev, i) != 0 {
-                unsafe { ahci_printf(b"cannot start port %u\n\0" as *const u8, i as u32) };
+                unsafe { info!(b"cannot start port %u\n\0" as *const u8, i as u32) };
                 return -1;
             }
             ahci_dev.port_idx = i;

@@ -1,6 +1,9 @@
 #![no_std]
 #![allow(dead_code, unused_assignments, unused_mut)]
 
+#[macro_use]
+extern crate log;
+
 pub mod drv_ahci;
 pub mod libahci;
 pub mod libata;

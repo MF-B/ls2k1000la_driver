@@ -9,6 +9,7 @@ crate-type = ["rlib"]
 [dependencies]
 ffi = "0.1.1"
 libc = "0.2.174"
+log = "0.4"
 
 [features]
 default = []
