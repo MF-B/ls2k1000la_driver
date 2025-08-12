@@ -43,17 +43,13 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
     let impl_0: u32 = ahci_dev.port_map;
     let speed: u32 = (ahci_dev.cap >> 20) & 0xf;
 
-    let scc_s: *const u8 = b"SATA\0" as *const u8;
-    let mut speed_s: *const u8 = null_mut();
-    if speed == 1 {
-        speed_s = b"1.5\0" as *const u8;
-    } else if speed == 2 {
-        speed_s = b"3\0" as *const u8;
-    } else if speed == 3 {
-        speed_s = b"6\0" as *const u8;
-    } else {
-        speed_s = b"?\0" as *const u8;
-    }
+    let scc_s = "SATA";
+    let speed_s = match speed {
+        1 => "1.5",
+        2 => "3",
+        3 => "6",
+        _ => "?",
+    };
 
     unsafe {
         info!(
