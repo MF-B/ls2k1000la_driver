@@ -23,4 +23,4 @@ relocation-model = "pic"
 panic = "abort"
 relocation-model = "pic"
 
-RUSTFLAGS="-C target-feature=-ual,-lsx,-lasx,-lvz" cargo build --target=loongarch64-unknown-linux-musl --release
+# RUSTFLAGS="-C target-feature=-ual,-lsx,-lasx,-lvz" cargo build --target=loongarch64-unknown-linux-musl --release
