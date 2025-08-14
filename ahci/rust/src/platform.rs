@@ -11,28 +11,28 @@ unsafe extern "C" {
 }
 
 
-// // 等待数毫秒
-// pub fn ahci_mdelay(ms: u32) {}
+// 等待数毫秒
+pub fn ahci_mdelay(ms: u32) {}
 
-// // 同步dcache中所有cached和uncached访存请求
-// pub fn ahci_sync_dcache() {
-//     unsafe {
-//         asm!("dbar 0");
-//     }
-// }
+// 同步dcache中所有cached和uncached访存请求
+pub fn ahci_sync_dcache() {
+    unsafe {
+        asm!("dbar 0");
+    }
+}
 
-// // 分配按align字节对齐的内存
-// pub fn ahci_malloc_align(size: u64, align: u32) -> u64 {
-//     0
-// }
+// 分配按align字节对齐的内存
+pub fn ahci_malloc_align(size: u64, align: u32) -> u64 {
+    0
+}
 
-// // 物理地址转换为uncached虚拟地址
-// pub fn ahci_phys_to_uncached(pa: u64) -> u64 {
-//     pa
-// }
+// 物理地址转换为uncached虚拟地址
+pub fn ahci_phys_to_uncached(pa: u64) -> u64 {
+    pa
+}
 
-// // cached虚拟地址转换为物理地址
-// // ahci dma可以接受64位的物理地址
-// pub fn ahci_virt_to_phys(va: u64) -> u64 {
-//     va
-// }
+// cached虚拟地址转换为物理地址
+// ahci dma可以接受64位的物理地址
+pub fn ahci_virt_to_phys(va: u64) -> u64 {
+    va
+}
