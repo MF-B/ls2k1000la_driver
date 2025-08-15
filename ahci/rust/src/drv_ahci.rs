@@ -152,16 +152,39 @@ fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
         info!("SATA Device Info:");
         let ptr = &pdev.serial.as_ptr();
         info!("ptr: {:p}", ptr);
-        let sn = core::str::from_utf8(&pdev.serial);
-        info!("S/N: {:?}", sn);
-        info!(
-            "Product model number: {:?}",
-            core::str::from_utf8_unchecked(&pdev.product)
-        );
-        info!(
-            "Firmware version: {:?}",
-            core::str::from_utf8_unchecked(&pdev.revision)
-        );
+        
+        // 安全地处理序列号字符串，限制长度并检查null终止符
+        let mut serial_safe = [0u8; 21]; // ATA_ID_SERNO_LEN + 1
+        let serial_len = pdev.serial.iter().position(|&x| x == 0).unwrap_or(20).min(20);
+        serial_safe[..serial_len].copy_from_slice(&pdev.serial[..serial_len]);
+        
+        match core::str::from_utf8(&serial_safe[..serial_len]) {
+            Ok(sn) => info!("S/N: {}", sn),
+            Err(_) => {
+                info!("S/N: [Invalid UTF-8, raw bytes: {:?}]", &pdev.serial[..serial_len.min(10)]);
+            }
+        }
+        
+        // 类似地处理产品名称
+        let mut product_safe = [0u8; 41]; // ATA_ID_PROD_LEN + 1  
+        let product_len = pdev.product.iter().position(|&x| x == 0).unwrap_or(40).min(40);
+        product_safe[..product_len].copy_from_slice(&pdev.product[..product_len]);
+        
+        match core::str::from_utf8(&product_safe[..product_len]) {
+            Ok(prod) => info!("Product model number: {}", prod),
+            Err(_) => info!("Product model number: [Invalid UTF-8]"),
+        }
+        
+        // 类似地处理固件版本
+        let mut revision_safe = [0u8; 9]; // ATA_ID_FW_REV_LEN + 1
+        let revision_len = pdev.revision.iter().position(|&x| x == 0).unwrap_or(8).min(8);
+        revision_safe[..revision_len].copy_from_slice(&pdev.revision[..revision_len]);
+        
+        match core::str::from_utf8(&revision_safe[..revision_len]) {
+            Ok(rev) => info!("Firmware version: {}", rev),
+            Err(_) => info!("Firmware version: [Invalid UTF-8]"),
+        }
+        
         info!("Capacity: {} sectors", pdev.lba);
     }
 }
