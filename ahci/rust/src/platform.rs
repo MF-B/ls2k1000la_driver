@@ -19,9 +19,6 @@ unsafe extern "C" {
 //     pub fn ahci_printf(fmt: *const u8, _: ...) -> i32;
 // }
 
-// 等待数毫秒
-pub fn ahci_mdelay(ms: u32) {}
-
 // 同步dcache中所有cached和uncached访存请求
 pub fn ahci_sync_dcache() {
     unsafe {
