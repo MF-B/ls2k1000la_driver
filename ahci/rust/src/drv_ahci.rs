@@ -51,47 +51,115 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
         _ => "?",
     };
 
-    unsafe {
-        info!(
-            "AHCI vers {:02x}{:02x}.{:02x}{:02x}, {} slots, {} ports, {} Gbps, 0x{:x} impl, {} mode",
-            vers >> 24 & 0xff,
-            vers >> 16 & 0xff,
-            vers >> 8 & 0xff,
-            vers & 0xff,
-            (cap >> 8 & 0x1f) + 1,
-            (cap & 0x1f) + 1,
-            speed_s,
-            impl_0,
-            scc_s,
-        );
-        // Print capability flags
-        let mut flags = Vec::new();
-        if cap & HOST_CAP_64 != 0 { flags.push("64bit"); }
-        if cap & HOST_CAP_NCQ != 0 { flags.push("ncq"); }
-        if cap & HOST_CAP_SNTF != 0 { flags.push("sntf"); }
-        if cap & HOST_CAP_MPS != 0 { flags.push("ilck"); }
-        if cap & HOST_CAP_SSS != 0 { flags.push("stag"); }
-        if cap & HOST_CAP_ALPM != 0 { flags.push("pm"); }
-        if cap & HOST_CAP_LED != 0 { flags.push("led"); }
-        if cap & HOST_CAP_CLO != 0 { flags.push("clo"); }
-        if cap & HOST_CAP_ONLY != 0 { flags.push("only"); }
-        if cap & HOST_CAP_PMP != 0 { flags.push("pmp"); }
-        if cap & HOST_CAP_FBS != 0 { flags.push("fbs"); }
-        if cap & HOST_CAP_PIO_MULTI != 0 { flags.push("pio"); }
-        if cap & HOST_CAP_SSC != 0 { flags.push("slum"); }
-        if cap & HOST_CAP_PART != 0 { flags.push("part"); }
-        if cap & HOST_CAP_CCC != 0 { flags.push("ccc"); }
-        if cap & HOST_CAP_EMS != 0 { flags.push("ems"); }
-        if cap & HOST_CAP_SXS != 0 { flags.push("sxs"); }
-        if cap2 & HOST_CAP2_DESO != 0 { flags.push("deso"); }
-        if cap2 & HOST_CAP2_SADM != 0 { flags.push("sadm"); }
-        if cap2 & HOST_CAP2_SDS != 0 { flags.push("sds"); }
-        if cap2 & HOST_CAP2_APST != 0 { flags.push("apst"); }
-        if cap2 & HOST_CAP2_NVMHCI != 0 { flags.push("nvmp"); }
-        if cap2 & HOST_CAP2_BOH != 0 { flags.push("boh"); }
-        
-        info!("flags: {}", flags.join(" "));
+    info!(
+        "AHCI vers {:02x}{:02x}.{:02x}{:02x}, {} slots, {} ports, {} Gbps, 0x{:x} impl, {} mode",
+        vers >> 24 & 0xff,
+        vers >> 16 & 0xff,
+        vers >> 8 & 0xff,
+        vers & 0xff,
+        (cap >> 8 & 0x1f) + 1,
+        (cap & 0x1f) + 1,
+        speed_s,
+        impl_0,
+        scc_s,
+    );
+    // Print capability flags
+    let mut flags = Vec::new();
+    info!("vec new");
+    if cap & HOST_CAP_64 != 0 {
+        flags.push("64bit");
     }
+    info!("64bit ok");
+    if cap & HOST_CAP_NCQ != 0 {
+        flags.push("ncq");
+    }
+    info!("ncq ok");
+    if cap & HOST_CAP_SNTF != 0 {
+        flags.push("sntf");
+    }
+    info!("sntf ok");
+    if cap & HOST_CAP_MPS != 0 {
+        flags.push("ilck");
+    }
+    info!("ilck ok");
+    if cap & HOST_CAP_SSS != 0 {
+        flags.push("stag");
+    }
+    info!("stag ok");
+    if cap & HOST_CAP_ALPM != 0 {
+        flags.push("pm");
+    }
+    info!("pm ok");
+    if cap & HOST_CAP_LED != 0 {
+        flags.push("led");
+    }
+    info!("led ok");
+    if cap & HOST_CAP_CLO != 0 {
+        flags.push("clo");
+    }
+    info!("clo ok");
+    if cap & HOST_CAP_ONLY != 0 {
+        flags.push("only");
+    }
+    info!("only ok");
+    if cap & HOST_CAP_PMP != 0 {
+        flags.push("pmp");
+    }
+    info!("pmp ok");
+    if cap & HOST_CAP_FBS != 0 {
+        flags.push("fbs");
+    }
+    info!("fbs ok");
+    if cap & HOST_CAP_PIO_MULTI != 0 {
+        flags.push("pio");
+    }
+    info!("pio ok");
+    if cap & HOST_CAP_SSC != 0 {
+        flags.push("slum");
+    }
+    info!("slum ok");
+    if cap & HOST_CAP_PART != 0 {
+        flags.push("part");
+    }
+    info!("part ok");
+    if cap & HOST_CAP_CCC != 0 {
+        flags.push("ccc");
+    }
+    info!("ccc ok");
+    if cap & HOST_CAP_EMS != 0 {
+        flags.push("ems");
+    }
+    info!("ems ok");
+    if cap & HOST_CAP_SXS != 0 {
+        flags.push("sxs");
+    }
+    info!("sxs ok");
+    if cap2 & HOST_CAP2_DESO != 0 {
+        flags.push("deso");
+    }
+    info!("deso ok");
+    if cap2 & HOST_CAP2_SADM != 0 {
+        flags.push("sadm");
+    }
+    info!("sadm ok");
+    if cap2 & HOST_CAP2_SDS != 0 {
+        flags.push("sds");
+    }
+    info!("sds ok");
+    if cap2 & HOST_CAP2_APST != 0 {
+        flags.push("apst");
+    }
+    info!("apst ok");
+    if cap2 & HOST_CAP2_NVMHCI != 0 {
+        flags.push("nvmp");
+    }
+    info!("nvmp ok");
+    if cap2 & HOST_CAP2_BOH != 0 {
+        flags.push("boh");
+    }
+    info!("boh ok");
+
+    info!("flags: {}", flags.join(" "));
 }
 
 // 输出sata硬盘信息
@@ -99,8 +167,14 @@ fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
     unsafe {
         info!("SATA Device Info:");
         info!("S/N: {:?}", core::str::from_utf8_unchecked(&pdev.serial));
-        info!("Product model number: {:?}", core::str::from_utf8_unchecked(&pdev.product));
-        info!("Firmware version: {:?}", core::str::from_utf8_unchecked(&pdev.revision));
+        info!(
+            "Product model number: {:?}",
+            core::str::from_utf8_unchecked(&pdev.product)
+        );
+        info!(
+            "Firmware version: {:?}",
+            core::str::from_utf8_unchecked(&pdev.revision)
+        );
         info!("Capacity: {} sectors", pdev.lba);
     }
 }
@@ -305,9 +379,7 @@ fn ahci_exec_ata_cmd(
     }
 
     if buf_len > AHCI_MAX_BYTES_PER_TRANS {
-        unsafe {
-            info!("max transfer length is {} bytes", AHCI_MAX_BYTES_PER_TRANS)
-        };
+        unsafe { info!("max transfer length is {} bytes", AHCI_MAX_BYTES_PER_TRANS) };
         return 0;
     }
 
@@ -428,9 +500,7 @@ fn ahci_port_start(ahci_dev: &mut ahci_device, port: u8) -> i32 {
     }
 
     if timeout <= 0 {
-        unsafe {
-            info!("ahci port {} failed to start", port as u32)
-        };
+        unsafe { info!("ahci port {} failed to start", port as u32) };
         return -1;
     }
     return 0;
