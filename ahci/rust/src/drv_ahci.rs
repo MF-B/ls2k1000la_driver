@@ -117,6 +117,7 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
     let host_mmio: u64 = ahci_dev.mmio_base;
 
     // reset ahci controller
+    info!("try reset ahci controller");
     tmp = ahci_readl(host_mmio + HOST_CTL);
     if tmp & HOST_RESET == 0 {
         ahci_writel(tmp | HOST_RESET, host_mmio + HOST_CTL);
@@ -129,6 +130,7 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
             break;
         }
     }
+    info!("reset ok");
 
     // enable ahci
     tmp = ahci_readl(host_mmio + HOST_CTL);
@@ -789,6 +791,7 @@ pub extern "C" fn ahci_sata_write_common(
 pub extern "C" fn ahci_init(ahci_dev: &mut ahci_device) -> i32 {
     ahci_dev.mmio_base = unsafe { ahci_phys_to_uncached(0x400e0000) };
 
+    info!("get mmio_base:{}", ahci_dev.mmio_base);
     let mut ret: i32 = ahci_host_init(ahci_dev);
     if ret != 0 {
         return -1;
