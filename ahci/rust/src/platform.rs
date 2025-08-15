@@ -4,7 +4,7 @@ use core::arch::asm;
 // for C ffi test
 #[unsafe(no_mangle)]
 unsafe extern "C" {
-//    pub fn ahci_mdelay(ms: u32);
+    pub fn ahci_mdelay(ms: u32);
 //    pub fn ahci_printf(fmt: *const u8, _: ...) -> i32;
     pub fn ahci_malloc_align(size: u64, align: u32) -> u64;
 //    pub fn ahci_sync_dcache();

@@ -119,9 +119,14 @@ fn ahci_host_init(ahci_dev: &mut ahci_device) -> i32 {
     // reset ahci controller
     info!("try reset ahci controller");
     tmp = ahci_readl(host_mmio + HOST_CTL);
+    info!("current host control: {:#x}", tmp);
     if tmp & HOST_RESET == 0 {
         ahci_writel(tmp | HOST_RESET, host_mmio + HOST_CTL);
     }
+    info!("writel ok");
+    let tem = ahci_readl(host_mmio + HOST_CTL);
+    info!("after write: {:#x}", tem);
+
     // wait for reset done
     loop {
         unsafe { ahci_mdelay(1) };
