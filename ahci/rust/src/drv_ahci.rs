@@ -150,7 +150,8 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
 fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
     unsafe {
         info!("SATA Device Info:");
-        info!("S/N: {:?}", core::str::from_utf8_unchecked(&pdev.serial));
+        let sn = core::str::from_utf8(&pdev.serial);
+        info!("S/N: {:?}", sn);
         info!(
             "Product model number: {:?}",
             core::str::from_utf8_unchecked(&pdev.product)
