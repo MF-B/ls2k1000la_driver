@@ -2,6 +2,7 @@
 
 extern crate alloc;
 use alloc::vec::Vec;
+use alloc::string::String;
 
 use crate::libahci::*;
 use crate::libata::*;
@@ -64,75 +65,82 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
         scc_s,
     );
     // Print capability flags
-    let mut flags = Vec::new();
+    let mut flags = String::new();
+    let mut push_flag = |s: &str| {
+        if !flags.is_empty() {
+            flags.push_str(", ");
+        }
+        flags.push_str(s);
+    };
+
     if cap & HOST_CAP_64 != 0 {
-        flags.push("64bit");
+        push_flag("64bit");
     }
     if cap & HOST_CAP_NCQ != 0 {
-        flags.push("ncq");
+        push_flag("ncq");
     }
     if cap & HOST_CAP_SNTF != 0 {
-        flags.push("sntf");
+        push_flag("sntf");
     }
     if cap & HOST_CAP_MPS != 0 {
-        flags.push("ilck");
+        push_flag("ilck");
     }
     if cap & HOST_CAP_SSS != 0 {
-        flags.push("stag");
+        push_flag("stag");
     }
     if cap & HOST_CAP_ALPM != 0 {
-        flags.push("pm");
+        push_flag("pm");
     }
     if cap & HOST_CAP_LED != 0 {
-        flags.push("led");
+        push_flag("led");
     }
     if cap & HOST_CAP_CLO != 0 {
-        flags.push("clo");
+        push_flag("clo");
     }
     if cap & HOST_CAP_ONLY != 0 {
-        flags.push("only");
+        push_flag("only");
     }
     if cap & HOST_CAP_PMP != 0 {
-        flags.push("pmp");
+        push_flag("pmp");
     }
     if cap & HOST_CAP_FBS != 0 {
-        flags.push("fbs");
+        push_flag("fbs");
     }
     if cap & HOST_CAP_PIO_MULTI != 0 {
-        flags.push("pio");
+        push_flag("pio");
     }
     if cap & HOST_CAP_SSC != 0 {
-        flags.push("slum");
+        push_flag("slum");
     }
     if cap & HOST_CAP_PART != 0 {
-        flags.push("part");
+        push_flag("part");
     }
     if cap & HOST_CAP_CCC != 0 {
-        flags.push("ccc");
+        push_flag("ccc");
     }
     if cap & HOST_CAP_EMS != 0 {
-        flags.push("ems");
+        push_flag("ems");
     }
     if cap & HOST_CAP_SXS != 0 {
-        flags.push("sxs");
+        push_flag("sxs");
     }
     if cap2 & HOST_CAP2_DESO != 0 {
-        flags.push("deso");
+        push_flag("deso");
     }
     if cap2 & HOST_CAP2_SADM != 0 {
-        flags.push("sadm");
+        push_flag("sadm");
     }
     if cap2 & HOST_CAP2_SDS != 0 {
-        flags.push("sds");
+        push_flag("sds");
     }
     if cap2 & HOST_CAP2_APST != 0 {
-        flags.push("apst");
+        push_flag("apst");
     }
     if cap2 & HOST_CAP2_NVMHCI != 0 {
-        flags.push("nvmp");
+        push_flag("nvmp");
     }
     if cap2 & HOST_CAP2_BOH != 0 {
-        flags.push("boh");
+        push_flag("boh");
     }
 
     info!("flags: {}", flags);
