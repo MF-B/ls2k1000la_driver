@@ -1,6 +1,6 @@
 [build]
-target = ["loongarch64-unknown-linux-musl"]
+target = ["loongarch64-unknown-none"]
 rustflags = ["-C", "target-feature=-ual,-lsx,-lasx,-lvz"]
 
-[target.loongarch64-unknown-linux-musl]
+[target.loongarch64-unknown-none]
 linker = "loongarch64-unknown-linux-musl-gcc"
