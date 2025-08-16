@@ -150,8 +150,6 @@ fn ahci_print_info(ahci_dev: &ahci_device) {
 fn ahci_sata_print_info(pdev: &ahci_blk_dev) {
     unsafe {
         info!("SATA Device Info:");
-        let ptr = &pdev.serial.as_ptr();
-        info!("ptr: {:p}", ptr);
         
         // 安全地处理序列号字符串，限制长度并检查null终止符
         let mut serial_safe = [0u8; 21]; // ATA_ID_SERNO_LEN + 1

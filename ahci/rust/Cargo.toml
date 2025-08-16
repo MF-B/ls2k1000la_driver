@@ -18,9 +18,12 @@ panic-handler = []
 [profile.dev]
 panic = "abort"
 relocation-model = "pic"
+codegen-units = 1
 
 [profile.release]
 panic = "abort"
 relocation-model = "pic"
+codegen-units = 1
+lto = true
 
 # RUSTFLAGS="-C target-feature=-ual,-lsx,-lasx,-lvz" cargo build --target=loongarch64-unknown-linux-musl --release

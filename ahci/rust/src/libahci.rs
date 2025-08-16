@@ -139,7 +139,7 @@ pub const READ_CMD: u32 = 0;
 pub const WRITE_CMD: u32 = 1;
 
 #[derive(Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct ahci_cmd_hdr {
     pub opts: u32,
     pub status: u32,
@@ -149,7 +149,7 @@ pub struct ahci_cmd_hdr {
 }
 
 #[derive(Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct ahci_sg {
     pub addr_lo: u32,
     pub addr_hi: u32,
@@ -158,7 +158,7 @@ pub struct ahci_sg {
 }
 
 #[derive(Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct ahci_ioport {
     pub port_mmio: u64,
     pub cmd_slot: *mut ahci_cmd_hdr,
@@ -171,19 +171,24 @@ pub struct ahci_ioport {
 }
 
 #[derive(Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct ahci_blk_dev {
     pub lba48: bool,
+    pub _pad1: [u8; 7],              // 对齐到8字节边界
     pub lba: u64,
     pub blksz: u64,
     pub queue_depth: u32,
-    pub product: [u8; (ATA_ID_PROD_LEN + 1) as usize],
-    pub serial: [u8; (ATA_ID_SERNO_LEN + 1) as usize],
-    pub revision: [u8; (ATA_ID_FW_REV_LEN + 1) as usize],
+    pub _pad2: [u8; 4],              // 对齐到8字节边界
+    pub product: [u8; (ATA_ID_PROD_LEN + 1) as usize],   // 41字节
+    pub _pad3: [u8; 7],              // 填充到8字节对齐 (41 + 7 = 48, 48 % 8 = 0)
+    pub serial: [u8; (ATA_ID_SERNO_LEN + 1) as usize],    // 21字节
+    pub _pad4: [u8; 3],              // 填充到8字节对齐 (21 + 3 = 24, 24 % 8 = 0)
+    pub revision: [u8; (ATA_ID_FW_REV_LEN + 1) as usize], // 9字节
+    pub _pad5: [u8; 7],              // 填充到8字节对齐 (9 + 7 = 16, 16 % 8 = 0)
 }
 
 #[derive(Copy, Clone)]
-#[repr(C)]
+#[repr(C, align(8))]
 pub struct ahci_device {
     pub mmio_base: u64,
 
